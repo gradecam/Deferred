@@ -383,15 +383,22 @@
             return deferred;
         };
 
+        function wrapThennable(p) {
+            var deferred = Deferred();
+            p.then(deferred.resolve, deferred.reject);
+            return deferred.promise();
+        }
+
         // Deferred helper
         var when = function( subordinate /* , ..., subordinateN */ ) {
-
-            var i = 0,
+             var i = 0,
             resolveValues = ( _type(subordinate) === 'array' && arguments.length === 1 ) ? subordinate : slice.call( arguments ),
             length = resolveValues.length;
 
             if ( _type(subordinate) === 'array' && subordinate.length === 1 ) {
                 subordinate = subordinate[ 0 ];
+            } else if ( subordinate && !_isFunction( subordinate.promise ) && _isFunction(subordinate.then) ) {
+                subordinate = wrapThennable(subordinate);
             }
 
             // the count of uncompleted subordinates
