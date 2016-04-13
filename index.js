@@ -388,6 +388,7 @@
                 } else {
                     intResolve.apply(this, arguments);
                 }
+                return this;
             };
 
             // Make the deferred a promise
