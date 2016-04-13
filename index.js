@@ -349,7 +349,7 @@
             promise.pipe = function() {
                 if (global.devMode) {
                     console.warn("Calling deprecated Deferred.pipe method", new Error().stack);
-                }  
+                }
                 return promise.then.apply(this, arguments);
             }
 
@@ -375,6 +375,15 @@
                 deferred[ tuple[0] ] = list.fire;
                 deferred[ tuple[0] + "With" ] = list.fireWith;
             });
+            // This is a hack to achieve closer to Promises/A+
+            var intResolve = deferred.resolve;
+            deferred.resolve = function(obj) {
+                if (obj && obj.then && _isFunction(obj.then)) {
+                    obj.then(this.resolve, this.reject);
+                } else {
+                    intResolve.apply(this, arguments);
+                }
+            };
 
             // Make the deferred a promise
             promise.promise( deferred );
