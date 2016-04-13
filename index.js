@@ -292,7 +292,12 @@
                 isRejected: function() {
                     return state == 'rejected';
                 },
+                'finally': function() {
+                    deferred.done( arguments ).fail( arguments );
+                    return this;
+                },
                 always: function() {
+                    console.warn("Deferred.always is deprecated! Use .finally instead!", new Error().stack);
                     deferred.done( arguments ).fail( arguments );
                     return this;
                 },
