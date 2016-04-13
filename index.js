@@ -346,7 +346,12 @@
             deferred = {};
 
             // Keep pipe for back-compat
-            promise.pipe = promise.then;
+            promise.pipe = function() {
+                if (global.devMode) {
+                    console.warn("Calling deprecated Deferred.pipe method", new Error().stack);
+                }  
+                return promise.then.apply(this, arguments);
+            }
 
             // Add list-specific methods
             _each( tuples, function( tuple, i ) {
